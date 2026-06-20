@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html><head><meta charset="utf-8"><title>Vitalink Hero Mockup</title>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif}
+  html,body{width:1280px;height:800px;overflow:hidden}
+  body{background:#f0f0f1;color:#1d2327}
+
+  /* ===== Top admin bar (real WP) ===== */
+  .admin-bar{height:32px;background:#1d2327;color:#fff;display:flex;align-items:center;padding:0 16px;font-size:13px;gap:18px}
+  .admin-bar .logo{color:#a7aaad;font-size:18px;font-weight:700}
+  .admin-bar .home{color:#fff;text-decoration:none;font-weight:500}
+  .admin-bar .spacer{flex:1}
+  .admin-bar .ab-item{color:#c3c4c7;font-size:12.5px;cursor:default}
+  .admin-bar .avatar{width:24px;height:24px;border-radius:50%;background:linear-gradient(135deg,#6366f1,#a855f7);display:inline-block;font-size:11px;color:#fff;text-align:center;line-height:24px;font-weight:700}
+
+  /* ===== Main shell ===== */
+  .shell{display:flex;height:calc(800px - 32px)}
+  .sidebar{width:160px;background:#1d2327;color:#c3c4c7;padding:8px 0;font-size:13px}
+  .sb-item{padding:8px 14px;display:flex;align-items:center;gap:8px;cursor:default}
+  .sb-item.active{background:#2271b13d;color:#72aee6}
+  .sb-item .ic{width:16px;text-align:center;font-size:14px}
+  .sb-section{padding:14px 14px 4px;font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:#8c8f94;font-weight:600}
+  .sb-item.sub{padding-left:30px;font-size:12.5px}
+  .sb-item.sub.active{background:#2271b13d;color:#72aee6;border-left:2px solid #72aee6;padding-left:28px}
+
+  /* ===== Editor main ===== */
+  .editor{flex:1;display:flex;flex-direction:column;background:#f0f0f1}
+  .editor-bar{height:56px;background:#fff;border-bottom:1px solid #dcdcde;display:flex;align-items:center;padding:0 20px;gap:12px}
+  .doc-title-input{flex:1;font-size:14px;color:#1d2327;font-weight:600}
+  .doc-title-input .label{color:#8c8f94;font-size:12px;font-weight:400;margin-right:6px}
+  .pill-btn{padding:6px 14px;border-radius:3px;font-size:12.5px;font-weight:500;border:1px solid #dcdcde;background:#fff;color:#1d2327;cursor:default}
+  .pill-btn.primary{background:#2271b1;color:#fff;border-color:#2271b1}
+  .pill-btn.dashed{border-style:dashed;color:#2271b1;border-color:#2271b1}
+
+  .editor-body{flex:1;display:flex;overflow:hidden}
+  .canvas{flex:1;padding:24px 32px;overflow:hidden;background:#f0f0f1}
+  .post-frame{background:#fff;border:1px solid #dcdcde;border-radius:4px;padding:24px 32px;max-width:760px;margin:0 auto}
+  .post-title{font-size:22px;font-weight:600;color:#1d2327;padding:6px 8px;border:1px solid transparent;border-radius:2px;margin-bottom:14px}
+  .post-title:hover{border-color:#ddd}
+
+  .block{display:flex;gap:8px;align-items:flex-start;padding:6px 8px;border-radius:2px;border:1px solid transparent;position:relative;margin-bottom:8px}
+  .block:hover{border-color:#ddd}
+  .block .grip{color:#a7aaad;font-size:14px;padding-top:2px;cursor:default;opacity:0}
+  .block:hover .grip{opacity:1}
+  .block-content{flex:1;font-size:15px;line-height:1.65;color:#1d2327}
+
+  .h-block .block-content{font-size:24px;font-weight:600;line-height:1.3;margin-top:6px}
+  .p-block .block-content{font-size:15px}
+  .img-block{background:#f6f7f7;border:1px dashed #c3c4c7;border-radius:2px;padding:24px;text-align:center;color:#8c8f94;font-size:13px}
+
+  /* ===== Selected text (highlighted) ===== */
+  .selected{background:#fff8c5;border-radius:2px;padding:0 2px}
+
+  /* ===== Vitalink sidebar ===== */
+  .vitalink{width:320px;background:#fff;border-left:1px solid #dcdcde;display:flex;flex-direction:column}
+  .vl-header{padding:14px 18px;border-bottom:1px solid #f0f0f1;display:flex;align-items:center;gap:10px}
+  .vl-logo{width:32px;height:32px;border-radius:6px;background:linear-gradient(135deg,#6366f1,#a855f7);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:14px;box-shadow:0 2px 4px rgba(99,102,241,.3)}
+  .vl-title{font-size:14px;font-weight:700;color:#1d2327;line-height:1.2}
+  .vl-sub{font-size:11px;color:#8c8f94;margin-top:1px}
+  .vl-badge{margin-left:auto;background:#d1fae5;color:#065f46;font-size:9.5px;font-weight:700;padding:2px 7px;border-radius:3px;text-transform:uppercase;letter-spacing:.06em}
+
+  .vl-tabs{display:flex;border-bottom:1px solid #f0f0f1;padding:0 14px;gap:2px}
+  .vl-tab{padding:10px 12px;font-size:12.5px;font-weight:500;color:#50575e;cursor:default;border-bottom:2px solid transparent;margin-bottom:-1px}
+  .vl-tab.active{color:#6366f1;border-bottom-color:#6366f1;font-weight:600}
+  .vl-tab .dot{display:inline-block;width:6px;height:6px;border-radius:50%;background:#6366f1;margin-right:5px;vertical-align:middle}
+
+  .vl-body{flex:1;padding:16px 18px;overflow:hidden}
+  .vl-field{margin-bottom:14px}
+  .vl-label{display:block;font-size:11px;font-weight:600;color:#50575e;margin-bottom:5px;text-transform:uppercase;letter-spacing:.04em}
+  .vl-select,.vl-textarea{width:100%;padding:7px 9px;border:1px solid #dcdcde;border-radius:3px;font-size:13px;color:#1d2327;background:#fff}
+  .vl-select{background:#fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath fill='%2350575e' d='M0 0l5 6 5-6z'/%3E%3C/svg%3E") no-repeat right 9px center;padding-right:24px;-webkit-appearance:none;appearance:none;cursor:default}
+  .vl-textarea{min-height:90px;resize:none;font-family:inherit;line-height:1.5;background:#fafafa;color:#50575e}
+  .vl-modes{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+  .vl-mode{padding:7px 8px;border:1px solid #dcdcde;border-radius:3px;font-size:11.5px;text-align:center;cursor:default;background:#fff;color:#1d2327}
+  .vl-mode.active{border-color:#6366f1;background:#eef2ff;color:#4338ca;font-weight:600}
+
+  .vl-provider{background:#f6f7f7;border:1px solid #e5e7eb;border-radius:5px;padding:9px 11px;display:flex;align-items:center;gap:8px;margin-bottom:12px}
+  .vl-provider .ic{width:18px;height:18px;border-radius:4px;background:#fff;display:flex;align-items:center;justify-content:center;font-size:11px;border:1px solid #e5e7eb}
+  .vl-provider .pname{font-size:12px;font-weight:600;color:#1d2327}
+  .vl-provider .pmodel{font-size:10.5px;color:#8c8f94;font-family:'SF Mono',monospace}
+  .vl-provider .swap{margin-left:auto;font-size:10.5px;color:#2271b1;font-weight:500;cursor:default}
+
+  .vl-btn{width:100%;padding:10px;background:linear-gradient(135deg,#6366f1,#8b5cf6);color:#fff;border:none;border-radius:4px;font-size:13px;font-weight:600;cursor:default;box-shadow:0 2px 6px rgba(99,102,241,.25);letter-spacing:.01em}
+  .vl-btn .arrow{margin-left:4px}
+  .vl-foot{padding:10px 18px;border-top:1px solid #f0f0f1;font-size:10.5px;color:#8c8f94;display:flex;justify-content:space-between;align-items:center}
+  .vl-foot .cache{display:flex;align-items:center;gap:5px}
+  .vl-foot .cache::before{content:"";width:6px;height:6px;border-radius:50%;background:#10b981}
+
+  /* small Vitalink floating handle on selected block (decorative) */
+  .vl-floater{position:absolute;top:-30px;right:0;background:#1d2327;color:#fff;font-size:11px;padding:4px 9px;border-radius:3px;display:flex;align-items:center;gap:5px;box-shadow:0 2px 6px rgba(0,0,0,.18)}
+  .vl-floater::after{content:"";position:absolute;bottom:-4px;right:18px;border:4px solid transparent;border-top-color:#1d2327;border-bottom:0}
+  .vl-floater .logo{width:12px;height:12px;border-radius:2px;background:linear-gradient(135deg,#6366f1,#a855f7);display:inline-block}
+</style>
+</head><body>
+
+<div class="admin-bar">
+  <span class="logo">W</span>
+  <a class="home">Vitalink Lab</a>
+  <span class="ab-item">Posts</span>
+  <span class="ab-item">Media</span>
+  <span class="ab-item">Pages</span>
+  <span class="ab-item">Comments</span>
+  <span class="ab-item">Appearance</span>
+  <span class="ab-item">Plugins</span>
+  <span class="ab-item">Users</span>
+  <span class="ab-item">Tools</span>
+  <span class="ab-item">Settings</span>
+  <span class="spacer"></span>
+  <span class="ab-item">+ New</span>
+  <span class="ab-item">🔔 2</span>
+  <span class="avatar">JG</span>
+</div>
+
+<div class="shell">
+  <div class="sidebar">
+    <div class="sb-section">Dashboard</div>
+    <div class="sb-section" style="padding-top:14px">Posts</div>
+    <div class="sb-item sub active"><span class="ic">📝</span>All Posts</div>
+    <div class="sb-item sub"><span class="ic">➕</span>Add New</div>
+    <div class="sb-item sub"><span class="ic">🏷</span>Categories</div>
+    <div class="sb-item sub"><span class="ic">📑</span>Tags</div>
+    <div class="sb-section">Media</div>
+    <div class="sb-item"><span class="ic">🖼</span>Library</div>
+    <div class="sb-item"><span class="ic">➕</span>Add New</div>
+    <div class="sb-section">Pages</div>
+    <div class="sb-item"><span class="ic">📄</span>All Pages</div>
+    <div class="sb-section">Settings</div>
+    <div class="sb-item"><span class="ic">⚙</span>General</div>
+    <div class="sb-item"><span class="ic">✏</span>Writing</div>
+    <div class="sb-item"><span class="ic">🔌</span>Vitalink</div>
+  </div>
+
+  <div class="editor">
+    <div class="editor-bar">
+      <span class="doc-title-input"><span class="label">Editing post:</span>How to choose a WooCommerce hosting plan in 2026</span>
+      <span class="pill-btn dashed">Switch to code editor</span>
+      <span class="pill-btn">Save draft</span>
+      <span class="pill-btn">Preview</span>
+      <span class="pill-btn primary">Publish</span>
+    </div>
+
+    <div class="editor-body">
+      <div class="canvas">
+        <div class="post-frame">
+          <div class="post-title">How to choose a WooCommerce hosting plan in 2026</div>
+
+          <div class="block h-block">
+            <span class="grip">⋮⋮</span>
+            <div class="block-content">Why hosting matters more than you think</div>
+          </div>
+
+          <div class="block p-block">
+            <span class="grip">⋮⋮</span>
+            <div class="block-content">
+              When you pick a host for a WooCommerce store you're really picking three things at once. You're picking where the database lives, where PHP runs every time someone hits the cart, and where the static assets for your theme sit on disk. Most stores never outgrow <span class="selected">shared hosting — but the ones that do hit a wall so hard they lose a holiday season to it</span>, so it's worth thinking about this before you launch.
+            </div>
+          </div>
+
+          <div class="block p-block" style="position:relative">
+            <span class="grip">⋮⋮</span>
+            <div class="vl-floater"><span class="logo"></span>Vitalink · Improve</div>
+            <div class="block-content">
+              In this guide I'll walk through the four tiers — shared, managed WordPress, VPS, and dedicated — and tell you exactly when each one stops being worth the money. I'll also share the three concrete questions I ask every client before recommending a host.
+            </div>
+          </div>
+
+          <div class="block img-block">
+            <span class="grip">⋮⋮</span>
+            <div class="block-content">📷 &nbsp; hero-image.jpg · 1600×900</div>
+          </div>
+
+          <div class="block p-block">
+            <span class="grip">⋮⋮</span>
+            <div class="block-content">
+              The TL;DR: most stores under 500 orders/day should be on managed WordPress hosting. Below that you're paying for capacity you don't use. Above that, you need at least a VPS with Redis object cache — and you need it before Black Friday, not after.
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="vitalink">
+        <div class="vl-header">
+          <div class="vl-logo">V</div>
+          <div>
+            <div class="vl-title">Vitalink</div>
+            <div class="vl-sub">AI content improvement</div>
+          </div>
+          <div class="vl-badge">Active</div>
+        </div>
+
+        <div class="vl-tabs">
+          <div class="vl-tab active"><span class="dot"></span>Improve</div>
+          <div class="vl-tab">Summarize</div>
+          <div class="vl-tab">Translate</div>
+          <div class="vl-tab">Alt Text</div>
+        </div>
+
+        <div class="vl-body">
+          <div class="vl-field">
+            <label class="vl-label">Provider</label>
+            <div class="vl-provider">
+              <div class="ic">A</div>
+              <div>
+                <div class="pname">Anthropic</div>
+                <div class="pmodel">claude-sonnet-4-6</div>
+              </div>
+              <div class="swap">change ▾</div>
+            </div>
+          </div>
+
+          <div class="vl-field">
+            <label class="vl-label">Selected text (highlighted in post)</label>
+            <textarea class="vl-textarea" readonly>...shared hosting — but the ones that do hit a wall so hard they lose a holiday season to it...</textarea>
+          </div>
+
+          <div class="vl-field">
+            <label class="vl-label">Rewrite mode</label>
+            <div class="vl-modes">
+              <div class="vl-mode">Clearer</div>
+              <div class="vl-mode active">Shorter</div>
+              <div class="vl-mode">More formal</div>
+            </div>
+          </div>
+
+          <button class="vl-btn">Improve selected text<span class="arrow">→</span></button>
+        </div>
+
+        <div class="vl-foot">
+          <span class="cache">Response cached for 1h</span>
+          <span>1 / 200 calls today</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</body></html>
