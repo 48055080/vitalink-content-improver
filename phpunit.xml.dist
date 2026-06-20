@@ -1,0 +1,30 @@
+<?xml version="1.0"?>
+<phpunit
+	bootstrap="tests/bootstrap.php"
+	backupGlobals="false"
+	colors="true"
+	beStrictAboutTestsThatDoNotTestAnything="false"
+	cacheDirectory=".phpunit.cache"
+	>
+	<testsuites>
+		<testsuite name="unit">
+			<directory suffix="Test.php">./tests/unit</directory>
+		</testsuite>
+		<testsuite name="integration">
+			<directory suffix="Test.php">./tests/integration</directory>
+		</testsuite>
+	</testsuites>
+
+	<coverage>
+		<report>
+			<text outputFile="php://stdout" showOnlySummary="true"/>
+			<html outputDirectory="coverage" lowUpperBound="50" highLowerBound="80"/>
+		</report>
+	</coverage>
+
+	<source>
+		<include>
+			<directory suffix=".php">./trunk/src</directory>
+		</include>
+	</source>
+</phpunit>

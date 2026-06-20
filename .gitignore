@@ -1,0 +1,43 @@
+# Dependencies
+/vendor/
+/node_modules/
+/trunk/vendor/
+/trunk/node_modules/
+
+# Build output
+/trunk/build/
+/build/
+
+# Composer
+composer.lock
+
+# WP.org artifacts (not committed)
+/.trunk/
+/.svn/
+
+# OS files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Editor
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Environment
+.env
+.env.local
+*.local
+
+# Test artifacts
+/coverage/
+/tests/coverage/
+/phpunit.xml
+/phpcs.xml
+/.phpunit.result.cache
+/.phpcs-cache
+
+# Logs
+*.log

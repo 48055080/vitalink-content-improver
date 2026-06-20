@@ -1,0 +1,28 @@
+/* Vitalink Content Improver — Admin CSS.
+ *
+ * Loaded on the settings page and the post editor sidebar. Keep this file
+ * small; the Gutenberg sidebar component is styled by @wordpress/components.
+ */
+
+.vitalink-ci-badge {
+	display: inline-block;
+	padding: 2px 8px;
+	border-radius: 3px;
+	font-size: 11px;
+	font-weight: 600;
+	letter-spacing: 0.04em;
+	text-transform: uppercase;
+	background: rgba(14, 165, 233, 0.1);
+	color: #0369a1;
+	border: 1px solid rgba(14, 165, 233, 0.25);
+}
+.vitalink-ci-badge--ok    { background: rgba(34, 197, 94, 0.12); color: #15803d; border-color: rgba(34, 197, 94, 0.3); }
+.vitalink-ci-badge--off   { background: rgba(148, 163, 184, 0.12); color: #475569; border-color: rgba(148, 163, 184, 0.3); }
+.vitalink-ci-badge--err   { background: rgba(220, 38, 38, 0.12); color: #b91c1c; border-color: rgba(220, 38, 38, 0.3); }
+
+.vitalink-ci-settings-notice {
+	border-left: 3px solid #0ea5e9;
+	padding: 10px 14px;
+	margin: 14px 0;
+	background: #f8fafc;
+}

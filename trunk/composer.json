@@ -1,0 +1,14 @@
+{
+    "name": "vitalink/content-improver",
+    "description": "Multi-provider AI content improvement for WordPress.",
+    "type": "wordpress-plugin",
+    "license": "GPL-2.0-or-later",
+    "require": {
+        "php": ">=8.1"
+    },
+    "autoload": {
+        "psr-4": {
+            "Vitalink\\ContentImprover\\": "src/"
+        }
+    }
+}
