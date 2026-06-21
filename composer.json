@@ -34,13 +34,19 @@
         }
     },
     "autoload-dev": {
-        "psr-4": {
-            "Vitalink\\ContentImprover\\Tests\\": "tests/"
-        }
+        "classmap": [
+            "tests/Fixtures/",
+            "tests/unit/",
+            "tests/integration/"
+        ]
     },
     "config": {
         "sort-packages": true,
-        "optimize-autoloader": true
+        "optimize-autoloader": true,
+        "allow-plugins": {
+            "dealerdirect/phpcodesniffer-composer-installer": true,
+            "phpstan/extension-installer": true
+        }
     },
     "scripts": {
         "test": "phpunit",

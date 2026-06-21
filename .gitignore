@@ -37,6 +37,7 @@ desktop.ini
 /phpunit.xml
 /phpcs.xml
 /.phpunit.result.cache
+/.phpunit.cache/
 /.phpcs-cache
 
 # Logs

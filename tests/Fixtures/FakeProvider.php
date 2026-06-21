@@ -16,10 +16,33 @@ use Vitalink\ContentImprover\Providers\ProviderInterface;
 
 final class FakeProvider implements ProviderInterface {
 
-	public ?string $last_style_seen = null;
+	public ?string $last_prompt_seen = null;
 	public ?array  $last_options_seen = null;
 
-	public function __construct( private string $reply ) {}
+	/**
+	 * @param string|array $reply_or_config
+	 *   - As a string: the canned reply to return from complete().
+	 *   - As an array: the provider config (passed by ProviderFactory).
+	 *                  The reply defaults to ''; tests that need a non-empty
+	 *                  reply can pass ['reply' => '...'].
+	 */
+	public function __construct( string|array $reply_or_config = '' ) {
+		if ( is_array( $reply_or_config ) ) {
+			$reply = (string) ( $reply_or_config['reply'] ?? '' );
+		} else {
+			$reply = $reply_or_config;
+		}
+		// Promote the value into a private slot via a small trick: assign
+		// through a closure-free path using a static map keyed by spl_object_id.
+		self::$replies[ spl_object_id( $this ) ] = $reply;
+	}
+
+	/** @var array<int, string> */
+	private static array $replies = array();
+
+	private function my_reply(): string {
+		return self::$replies[ spl_object_id( $this ) ] ?? '';
+	}
 
 	public function get_id(): string {
 		return 'fake';
@@ -38,12 +61,12 @@ final class FakeProvider implements ProviderInterface {
 	}
 
 	public function complete( string $prompt, array $options = [] ): string {
+		$this->last_prompt_seen  = $prompt;
 		$this->last_options_seen = $options;
-		$this->last_style_seen   = $options['style'] ?? null;
-		return $this->reply;
+		return $this->my_reply();
 	}
 
 	public function stream( string $prompt, array $options = [] ): \Generator {
-		yield $this->reply;
+		yield $this->my_reply();
 	}
 }
