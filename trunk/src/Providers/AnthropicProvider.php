@@ -9,17 +9,36 @@ declare(strict_types=1);
 
 namespace Vitalink\ContentImprover\Providers;
 
+use Vitalink\ContentImprover\Support\Encryption;
+
 final class AnthropicProvider implements ProviderInterface {
 
 	private const ENDPOINT = 'https://api.anthropic.com/v1/messages';
 	private const API_VERSION = '2023-06-01';
+	private const OPTION_API_KEY = 'vitalink_ci_anthropic_api_key';
 
 	private string $api_key;
 	private string $model;
 
 	public function __construct( array $config = array() ) {
-		$this->api_key = (string) ( $config['api_key'] ?? get_option( 'vitalink_ci_anthropic_api_key', '' ) );
+		$this->api_key = $this->resolve_api_key( $config );
 		$this->model   = (string) ( $config['model'] ?? get_option( 'vitalink_ci_anthropic_model', 'claude-sonnet-4-5' ) );
+	}
+
+	/**
+	 * Pick the API key from explicit config first, else fall back to the
+	 * stored option (which is encrypted at rest).
+	 */
+	private function resolve_api_key( array $config ): string {
+		if ( isset( $config['api_key'] ) && '' !== $config['api_key'] ) {
+			return (string) $config['api_key'];
+		}
+		$stored = (string) get_option( self::OPTION_API_KEY, '' );
+		if ( '' === $stored ) {
+			return '';
+		}
+		$plain = Encryption::decrypt( $stored );
+		return false === $plain ? '' : $plain;
 	}
 
 	public function get_id(): string {

@@ -24,11 +24,77 @@ use WP_REST_Server;
 final class ContentController {
 
 	public function register_routes(): void {
-		$ns = \Vitalink\ContentImprover\VITALINK_CI_REST_NAMESPACE;
-		register_rest_route( $ns, '/improve',   array( $this, 'improve' ) );
-		register_rest_route( $ns, '/summarize', array( $this, 'summarize' ) );
-		register_rest_route( $ns, '/translate', array( $this, 'translate' ) );
-		register_rest_route( $ns, '/alt-text',  array( $this, 'alt_text' ) );
+		$ns = \VITALINK_CI_REST_NAMESPACE;
+
+		register_rest_route( $ns, '/improve', array(
+			'methods'             => WP_REST_Server::CREATABLE,
+			'callback'            => array( $this, 'improve' ),
+			'permission_callback' => array( $this, 'can_edit_posts' ),
+			'args'                => array(
+				'text'  => array(
+					'required' => true,
+					'type'     => 'string',
+				),
+				'style' => array(
+					'required' => false,
+					'type'     => 'string',
+					'default'  => ContentImprover::STYLE_CLEARER,
+				),
+			),
+		) );
+
+		register_rest_route( $ns, '/summarize', array(
+			'methods'             => WP_REST_Server::CREATABLE,
+			'callback'            => array( $this, 'summarize' ),
+			'permission_callback' => array( $this, 'can_edit_posts' ),
+			'args'                => array(
+				'text'   => array(
+					'required' => true,
+					'type'     => 'string',
+				),
+				'length' => array(
+					'required' => false,
+					'type'     => 'integer',
+					'default'  => 3,
+				),
+			),
+		) );
+
+		register_rest_route( $ns, '/translate', array(
+			'methods'             => WP_REST_Server::CREATABLE,
+			'callback'            => array( $this, 'translate' ),
+			'permission_callback' => array( $this, 'can_edit_posts' ),
+			'args'                => array(
+				'text'   => array(
+					'required' => true,
+					'type'     => 'string',
+				),
+				'target' => array(
+					'required' => false,
+					'type'     => 'string',
+				),
+			),
+		) );
+
+		register_rest_route( $ns, '/alt-text', array(
+			'methods'             => WP_REST_Server::CREATABLE,
+			'callback'            => array( $this, 'alt_text' ),
+			'permission_callback' => array( $this, 'can_edit_posts' ),
+			'args'                => array(
+				'image' => array(
+					'required' => true,
+					'type'     => 'string',
+				),
+			),
+		) );
+	}
+
+	/**
+	 * Capability check shared by every endpoint. Authors and above can
+	 * call the AI features; subscribers cannot (would burn API quota).
+	 */
+	public function can_edit_posts(): bool {
+		return current_user_can( 'edit_posts' );
 	}
 
 	public function improve( WP_REST_Request $request ): WP_REST_Response|WP_Error {

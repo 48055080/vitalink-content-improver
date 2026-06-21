@@ -24,6 +24,11 @@ $GLOBALS['__wp_stubs'] = array(
 	// assert on the return value of $wpdb->query().
 	'options_table'   => array(),
 	'last_query_rows_affected' => 0,
+	// REST route registrations captured by register_rest_route().
+	// Each entry: [ 'namespace' => '...', 'route' => '...', 'args' => array(...) ]
+	'rest_routes'     => array(),
+	'current_user_can' => false,    // what current_user_can() returns in tests
+	'current_user_caps' => array(), // which caps have been checked
 );
 
 // Reset all stubs to a clean state. Call from setUp().
@@ -34,6 +39,9 @@ function wp_stubs_reset(): void {
 	$GLOBALS['__wp_stubs']['last_filter_args']        = array();
 	$GLOBALS['__wp_stubs']['options_table']           = array();
 	$GLOBALS['__wp_stubs']['last_query_rows_affected'] = 0;
+	$GLOBALS['__wp_stubs']['rest_routes']             = array();
+	$GLOBALS['__wp_stubs']['current_user_can']        = false;
+	$GLOBALS['__wp_stubs']['current_user_caps']       = array();
 }
 
 /**
@@ -101,6 +109,30 @@ if ( ! function_exists( 'wp_json_encode' ) ) {
 		return json_encode( $data, $options, $depth );
 	}
 }
+if ( ! function_exists( 'current_user_can' ) ) {
+	function current_user_can( $capability, ...$args ) {
+		$GLOBALS['__wp_stubs']['current_user_caps'][] = $capability;
+		return (bool) $GLOBALS['__wp_stubs']['current_user_can'];
+	}
+}
+if ( ! function_exists( 'register_rest_route' ) ) {
+	function register_rest_route( $namespace, $route, $args ) {
+		// $args can be a single options array, or an array of methods→args.
+		// Normalise both shapes to [ method => args ] for assertion.
+		$methods = array();
+		if ( isset( $args['methods'] ) || isset( $args['callback'] ) || isset( $args['permission_callback'] ) ) {
+			$methods[ $args['methods'] ?? 'GET' ] = $args;
+		} else {
+			$methods = $args;
+		}
+		$GLOBALS['__wp_stubs']['rest_routes'][] = array(
+			'namespace' => (string) $namespace,
+			'route'     => (string) $route,
+			'methods'   => $methods,
+		);
+		return true;
+	}
+}
 
 // WordPress time constants used by ResponseCache.
 if ( ! defined( 'MINUTE_IN_SECONDS' ) ) {
@@ -108,6 +140,22 @@ if ( ! defined( 'MINUTE_IN_SECONDS' ) ) {
 }
 if ( ! defined( 'DAY_IN_SECONDS' ) ) {
 	define( 'DAY_IN_SECONDS', 86400 );
+}
+
+// Plugin-defined constants.
+if ( ! defined( 'VITALINK_CI_REST_NAMESPACE' ) ) {
+	define( 'VITALINK_CI_REST_NAMESPACE', 'vitalink-ci/v1' );
+}
+
+// Minimal WP_REST_Server stub. Only the method constants are referenced
+// at route registration time.
+if ( ! class_exists( 'WP_REST_Server' ) ) {
+	final class WP_REST_Server {
+		const READABLE   = 'GET';
+		const CREATABLE  = 'POST';
+		const EDITABLE   = 'POST, PUT, PATCH';
+		const DELETABLE  = 'DELETE';
+	}
 }
 
 // Minimal $wpdb stub used by ResponseCache::flush(). Tests can seed

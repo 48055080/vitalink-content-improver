@@ -50,7 +50,7 @@ final class SettingsPage {
 
 		$register( 'vitalink_ci_openai_api_key', array(
 			'type'              => 'string',
-			'sanitize_callback' => array( $this, 'sanitize_secret' ),
+			'sanitize_callback' => $this->make_secret_sanitizer( 'vitalink_ci_openai_api_key' ),
 			'default'           => '',
 		) );
 
@@ -62,7 +62,7 @@ final class SettingsPage {
 
 		$register( 'vitalink_ci_anthropic_api_key', array(
 			'type'              => 'string',
-			'sanitize_callback' => array( $this, 'sanitize_secret' ),
+			'sanitize_callback' => $this->make_secret_sanitizer( 'vitalink_ci_anthropic_api_key' ),
 			'default'           => '',
 		) );
 
@@ -228,16 +228,21 @@ final class SettingsPage {
 	}
 
 	/**
-	 * Sanitize callback for secret option. Encrypts before storage.
+	 * Build a sanitize callback for a specific secret option.
+	 *
+	 * Each provider key is a separate option, so the empty-submit
+	 * "leave existing value" rule must read the right slot.
 	 */
-	public function sanitize_secret( $value ) {
-		$value = (string) $value;
-		if ( '' === $value ) {
-			// Empty submit means "leave existing value".
-			return get_option( 'vitalink_ci_openai_api_key', '' );
-		}
-		$cipher = Encryption::encrypt( $value );
-		return false === $cipher ? '' : $cipher;
+	private function make_secret_sanitizer( string $option_name ): \Closure {
+		return static function ( $value ) use ( $option_name ) {
+			$value = (string) $value;
+			if ( '' === $value ) {
+				// Empty submit means "leave existing value".
+				return get_option( $option_name, '' );
+			}
+			$cipher = Encryption::encrypt( $value );
+			return false === $cipher ? '' : $cipher;
+		};
 	}
 
 	public function handle_test_request(): void {
