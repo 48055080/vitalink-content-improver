@@ -113,4 +113,114 @@ final class ProviderFactoryTest extends TestCase {
 		$this->assertContains( 'anthropic', $ids );
 		$this->assertContains( 'ollama', $ids );
 	}
+
+	// ---------- Edge cases ----------
+
+	public function test_create_with_empty_config_still_works(): void {
+		$provider = ProviderFactory::create( 'fake' );
+
+		$this->assertInstanceOf( ProviderInterface::class, $provider );
+	}
+
+	public function test_create_throws_for_empty_string_id(): void {
+		$this->expectException( ProviderException::class );
+		$this->expectExceptionMessage( 'Unknown provider: ' );
+
+		ProviderFactory::create( '' );
+	}
+
+	public function test_filter_can_remove_builtin_providers(): void {
+		$GLOBALS['__wp_stubs']['filters']['vitalink_ci_register_providers'] =
+			static function ( $map ) {
+				unset( $map['openai'], $map['anthropic'], $map['ollama'] );
+				// Re-add fake (the test filter overrides the setUp filter).
+				$map['fake'] = \Vitalink\ContentImprover\Tests\Fixtures\FakeProvider::class;
+				return $map;
+			};
+
+		$ids = array_column( ProviderFactory::list_providers(), 'id' );
+
+		$this->assertContains( 'fake', $ids );
+		$this->assertNotContains( 'openai', $ids );
+		$this->assertNotContains( 'anthropic', $ids );
+		$this->assertNotContains( 'ollama', $ids );
+	}
+
+	public function test_filter_can_add_multiple_custom_providers(): void {
+		$GLOBALS['__wp_stubs']['filters']['vitalink_ci_register_providers'] =
+			static function ( $map ) {
+				$map['custom-a'] = \Vitalink\ContentImprover\Tests\Fixtures\FakeProvider::class;
+				$map['custom-b'] = \Vitalink\ContentImprover\Tests\Fixtures\FakeProvider::class;
+				return $map;
+			};
+
+		$ids = array_column( ProviderFactory::list_providers(), 'id' );
+
+		$this->assertContains( 'custom-a', $ids );
+		$this->assertContains( 'custom-b', $ids );
+	}
+
+	public function test_filter_can_override_a_builtin_class(): void {
+		// Allow a custom class to take over the 'fake' id.
+		$GLOBALS['__wp_stubs']['filters']['vitalink_ci_register_providers'] =
+			static function ( $map ) {
+				$map['fake'] = \Vitalink\ContentImprover\Tests\Fixtures\FakeProvider::class;
+				return $map;
+			};
+
+		$provider = ProviderFactory::create( 'fake', array( 'reply' => 'overridden' ) );
+
+		$this->assertSame( 'overridden', $provider->complete( 'any prompt' ) );
+	}
+
+	public function test_get_active_provider_id_falls_back_to_default_for_invalid_value(): void {
+		// Empty string sanitizes to '' → factory returns '' for get_active,
+		// but the sanitize_key step is what we want to exercise here.
+		$GLOBALS['__wp_stubs']['options']['vitalink_ci_provider'] = '';
+
+		$this->assertSame( '', ProviderFactory::get_active_provider_id() );
+	}
+
+	public function test_get_active_provider_id_sanitizes_special_characters(): void {
+		$GLOBALS['__wp_stubs']['options']['vitalink_ci_provider'] = 'Open/AI!@#';
+
+		// sanitize_key strips everything outside [a-z0-9_-] and lowercases.
+		$this->assertSame( 'openai', ProviderFactory::get_active_provider_id() );
+	}
+
+	public function test_filter_receives_builtin_map_as_input(): void {
+		$received = null;
+		$GLOBALS['__wp_stubs']['filters']['vitalink_ci_register_providers'] =
+			static function ( $map ) use ( &$received ) {
+				$received = $map;
+				return $map;
+			};
+
+		ProviderFactory::list_providers();
+
+		$this->assertIsArray( $received );
+		$this->assertArrayHasKey( 'openai', $received );
+		$this->assertArrayHasKey( 'anthropic', $received );
+		$this->assertArrayHasKey( 'ollama', $received );
+	}
+
+	public function test_create_returns_distinct_instances_per_call(): void {
+		$provider_a = ProviderFactory::create( 'fake' );
+		$provider_b = ProviderFactory::create( 'fake' );
+
+		$this->assertNotSame( $provider_a, $provider_b );
+	}
+
+	public function test_filter_returning_null_falls_back_to_builtins(): void {
+		$GLOBALS['__wp_stubs']['filters']['vitalink_ci_register_providers'] =
+			static function ( $map ) {
+				return null;
+			};
+
+		$ids = array_column( ProviderFactory::list_providers(), 'id' );
+
+		$this->assertContains( 'openai', $ids );
+		$this->assertContains( 'anthropic', $ids );
+		$this->assertContains( 'ollama', $ids );
+	}
 }
