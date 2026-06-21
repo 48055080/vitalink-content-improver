@@ -26,67 +26,83 @@ final class ContentController {
 	public function register_routes(): void {
 		$ns = \VITALINK_CI_REST_NAMESPACE;
 
-		register_rest_route( $ns, '/improve', array(
-			'methods'             => WP_REST_Server::CREATABLE,
-			'callback'            => array( $this, 'improve' ),
-			'permission_callback' => array( $this, 'can_edit_posts' ),
-			'args'                => array(
-				'text'  => array(
-					'required' => true,
-					'type'     => 'string',
+		register_rest_route(
+			$ns,
+			'/improve',
+			array(
+				'methods'             => WP_REST_Server::CREATABLE,
+				'callback'            => array( $this, 'improve' ),
+				'permission_callback' => array( $this, 'can_edit_posts' ),
+				'args'                => array(
+					'text'  => array(
+						'required' => true,
+						'type'     => 'string',
+					),
+					'style' => array(
+						'required' => false,
+						'type'     => 'string',
+						'default'  => ContentImprover::STYLE_CLEARER,
+					),
 				),
-				'style' => array(
-					'required' => false,
-					'type'     => 'string',
-					'default'  => ContentImprover::STYLE_CLEARER,
-				),
-			),
-		) );
+			)
+		);
 
-		register_rest_route( $ns, '/summarize', array(
-			'methods'             => WP_REST_Server::CREATABLE,
-			'callback'            => array( $this, 'summarize' ),
-			'permission_callback' => array( $this, 'can_edit_posts' ),
-			'args'                => array(
-				'text'   => array(
-					'required' => true,
-					'type'     => 'string',
+		register_rest_route(
+			$ns,
+			'/summarize',
+			array(
+				'methods'             => WP_REST_Server::CREATABLE,
+				'callback'            => array( $this, 'summarize' ),
+				'permission_callback' => array( $this, 'can_edit_posts' ),
+				'args'                => array(
+					'text'   => array(
+						'required' => true,
+						'type'     => 'string',
+					),
+					'length' => array(
+						'required' => false,
+						'type'     => 'integer',
+						'default'  => 3,
+					),
 				),
-				'length' => array(
-					'required' => false,
-					'type'     => 'integer',
-					'default'  => 3,
-				),
-			),
-		) );
+			)
+		);
 
-		register_rest_route( $ns, '/translate', array(
-			'methods'             => WP_REST_Server::CREATABLE,
-			'callback'            => array( $this, 'translate' ),
-			'permission_callback' => array( $this, 'can_edit_posts' ),
-			'args'                => array(
-				'text'   => array(
-					'required' => true,
-					'type'     => 'string',
+		register_rest_route(
+			$ns,
+			'/translate',
+			array(
+				'methods'             => WP_REST_Server::CREATABLE,
+				'callback'            => array( $this, 'translate' ),
+				'permission_callback' => array( $this, 'can_edit_posts' ),
+				'args'                => array(
+					'text'   => array(
+						'required' => true,
+						'type'     => 'string',
+					),
+					'target' => array(
+						'required' => false,
+						'type'     => 'string',
+					),
 				),
-				'target' => array(
-					'required' => false,
-					'type'     => 'string',
-				),
-			),
-		) );
+			)
+		);
 
-		register_rest_route( $ns, '/alt-text', array(
-			'methods'             => WP_REST_Server::CREATABLE,
-			'callback'            => array( $this, 'alt_text' ),
-			'permission_callback' => array( $this, 'can_edit_posts' ),
-			'args'                => array(
-				'image' => array(
-					'required' => true,
-					'type'     => 'string',
+		register_rest_route(
+			$ns,
+			'/alt-text',
+			array(
+				'methods'             => WP_REST_Server::CREATABLE,
+				'callback'            => array( $this, 'alt_text' ),
+				'permission_callback' => array( $this, 'can_edit_posts' ),
+				'args'                => array(
+					'image' => array(
+						'required' => true,
+						'type'     => 'string',
+					),
 				),
-			),
-		) );
+			)
+		);
 	}
 
 	/**

@@ -55,8 +55,20 @@ final class ResponseCacheTest extends TestCase {
 	public function test_key_is_order_insensitive_on_options(): void {
 		$cache = new ResponseCache( 600 );
 
-		$key_a = $cache->key( 'Same text.', array( 'style' => 'clearer', 'length' => 150 ) );
-		$key_b = $cache->key( 'Same text.', array( 'length' => 150, 'style' => 'clearer' ) );
+		$key_a = $cache->key(
+			'Same text.',
+			array(
+				'style'  => 'clearer',
+				'length' => 150,
+			)
+		);
+		$key_b = $cache->key(
+			'Same text.',
+			array(
+				'length' => 150,
+				'style'  => 'clearer',
+			)
+		);
 
 		$this->assertSame( $key_a, $key_b );
 	}
@@ -100,7 +112,7 @@ final class ResponseCacheTest extends TestCase {
 		$cache = new ResponseCache( 600 );
 		$cache->set( 'A prompt', array(), 'Should not be stored.' );
 
-		$key  = $cache->key( 'A prompt', array() );
+		$key = $cache->key( 'A prompt', array() );
 		$this->assertArrayNotHasKey( $key, $GLOBALS['__wp_stubs']['transients'] );
 	}
 
@@ -214,14 +226,16 @@ final class ResponseCacheTest extends TestCase {
 	}
 
 	public function test_flush_returns_count_of_deleted_vitalink_rows(): void {
-		wp_stubs_seed_options_table( array(
-			'_transient_vitalink_ci_resp_aaaa'  => 'value a',
-			'_transient_vitalink_ci_resp_bbbb'  => 'value b',
-			'_transient_timeout_vitalink_ci_resp_aaaa' => '1700000000',
-			// Unrelated rows — must NOT be deleted.
-			'_transient_some_other_plugin_xxxx' => 'untouched',
-			'siteurl'                          => 'https://example.com',
-		) );
+		wp_stubs_seed_options_table(
+			array(
+				'_transient_vitalink_ci_resp_aaaa'         => 'value a',
+				'_transient_vitalink_ci_resp_bbbb'         => 'value b',
+				'_transient_timeout_vitalink_ci_resp_aaaa' => '1700000000',
+				// Unrelated rows — must NOT be deleted.
+				'_transient_some_other_plugin_xxxx'        => 'untouched',
+				'siteurl'                                  => 'https://example.com',
+			)
+		);
 
 		$cache = new ResponseCache( 600 );
 		$count = $cache->flush();
@@ -234,10 +248,12 @@ final class ResponseCacheTest extends TestCase {
 	}
 
 	public function test_flush_with_no_vitalink_rows_returns_zero(): void {
-		wp_stubs_seed_options_table( array(
-			'_transient_some_other_plugin_xxxx' => 'untouched',
-			'siteurl'                          => 'https://example.com',
-		) );
+		wp_stubs_seed_options_table(
+			array(
+				'_transient_some_other_plugin_xxxx' => 'untouched',
+				'siteurl'                           => 'https://example.com',
+			)
+		);
 
 		$cache = new ResponseCache( 600 );
 
@@ -324,15 +340,15 @@ final class ResponseCacheTest extends TestCase {
 	public function test_different_text_produces_different_keys_and_independent_entries(): void {
 		$cache = new ResponseCache( 600 );
 
-		$cache->set( 'first',  array( 'style' => 'clearer' ), 'A' );
+		$cache->set( 'first', array( 'style' => 'clearer' ), 'A' );
 		$cache->set( 'second', array( 'style' => 'clearer' ), 'B' );
 
-		$this->assertSame( 'A', $cache->get( 'first',  array( 'style' => 'clearer' ) ) );
+		$this->assertSame( 'A', $cache->get( 'first', array( 'style' => 'clearer' ) ) );
 		$this->assertSame( 'B', $cache->get( 'second', array( 'style' => 'clearer' ) ) );
 
 		$cache->delete( 'first', array( 'style' => 'clearer' ) );
 
-		$this->assertNull( $cache->get( 'first',  array( 'style' => 'clearer' ) ) );
+		$this->assertNull( $cache->get( 'first', array( 'style' => 'clearer' ) ) );
 		$this->assertSame( 'B', $cache->get( 'second', array( 'style' => 'clearer' ) ) );
 	}
 }

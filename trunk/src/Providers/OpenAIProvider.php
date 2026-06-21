@@ -13,7 +13,7 @@ use Vitalink\ContentImprover\Support\Encryption;
 
 final class OpenAIProvider implements ProviderInterface {
 
-	private const ENDPOINT = 'https://api.openai.com/v1/chat/completions';
+	private const ENDPOINT       = 'https://api.openai.com/v1/chat/completions';
 	private const OPTION_API_KEY = 'vitalink_ci_openai_api_key';
 
 	private string $api_key;
@@ -73,8 +73,14 @@ final class OpenAIProvider implements ProviderInterface {
 			'temperature' => $temperature,
 			'max_tokens'  => $max_tokens,
 			'messages'    => array(
-				array( 'role' => 'system', 'content' => $system ),
-				array( 'role' => 'user', 'content' => $prompt ),
+				array(
+					'role'    => 'system',
+					'content' => $system,
+				),
+				array(
+					'role'    => 'user',
+					'content' => $prompt,
+				),
 			),
 		);
 
@@ -93,9 +99,7 @@ final class OpenAIProvider implements ProviderInterface {
 		if ( is_wp_error( $response ) ) {
 			throw new ProviderException(
 				$response->get_error_message(),
-				ProviderException::CODE_NETWORK,
-				null,
-				$response
+				ProviderException::CODE_NETWORK
 			);
 		}
 

@@ -49,10 +49,10 @@ final class OllamaProvider implements ProviderInterface {
 		$system      = (string) ( $options['system'] ?? 'You are a helpful assistant.' );
 
 		$body = array(
-			'model'       => $model,
-			'prompt'      => $system . "\n\n" . $prompt,
-			'stream'      => false,
-			'options'     => array(
+			'model'   => $model,
+			'prompt'  => $system . "\n\n" . $prompt,
+			'stream'  => false,
+			'options' => array(
 				'temperature' => $temperature,
 			),
 		);
@@ -71,9 +71,7 @@ final class OllamaProvider implements ProviderInterface {
 		if ( is_wp_error( $response ) ) {
 			throw new ProviderException(
 				'Ollama unreachable at ' . $this->base_url . ': ' . $response->get_error_message(),
-				ProviderException::CODE_NETWORK,
-				null,
-				$response
+				ProviderException::CODE_NETWORK
 			);
 		}
 

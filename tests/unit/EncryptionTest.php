@@ -217,7 +217,7 @@ final class EncryptionTest extends TestCase {
 			$blob = Encryption::encrypt( $plaintext );
 			$bin  = base64_decode( substr( $blob, 3 ), true );
 
-			$this->assertNotFalse( $bin, "Encryption must produce valid base64 for input of length " . strlen( $plaintext ) );
+			$this->assertNotFalse( $bin, 'Encryption must produce valid base64 for input of length ' . strlen( $plaintext ) );
 			$this->assertGreaterThanOrEqual( strlen( $plaintext ), strlen( $bin ) );
 			$this->assertLessThanOrEqual( strlen( $plaintext ) + 64, strlen( $bin ) );
 		}

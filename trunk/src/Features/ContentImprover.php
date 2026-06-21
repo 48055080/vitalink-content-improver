@@ -18,9 +18,9 @@ use Vitalink\ContentImprover\Providers\ProviderInterface;
 
 final class ContentImprover {
 
-	public const STYLE_CLEARER  = 'clearer';
-	public const STYLE_SHORTER  = 'shorter';
-	public const STYLE_FORMAL   = 'more_formal';
+	public const STYLE_CLEARER = 'clearer';
+	public const STYLE_SHORTER = 'shorter';
+	public const STYLE_FORMAL  = 'more_formal';
 
 	public const STYLES = array(
 		self::STYLE_CLEARER => 'Clearer',

@@ -17,7 +17,7 @@ use Vitalink\ContentImprover\Providers\ProviderInterface;
 final class FakeProvider implements ProviderInterface {
 
 	public ?string $last_prompt_seen = null;
-	public ?array  $last_options_seen = null;
+	public ?array $last_options_seen = null;
 
 	/**
 	 * @param string|array $reply_or_config
@@ -60,13 +60,13 @@ final class FakeProvider implements ProviderInterface {
 		return array( 'fake-model' );
 	}
 
-	public function complete( string $prompt, array $options = [] ): string {
+	public function complete( string $prompt, array $options = array() ): string {
 		$this->last_prompt_seen  = $prompt;
 		$this->last_options_seen = $options;
 		return $this->my_reply();
 	}
 
-	public function stream( string $prompt, array $options = [] ): \Generator {
+	public function stream( string $prompt, array $options = array() ): \Generator {
 		yield $this->my_reply();
 	}
 }

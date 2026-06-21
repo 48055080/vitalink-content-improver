@@ -32,9 +32,9 @@ final class Encryption {
 			if ( false === $key ) {
 				return false;
 			}
-			$nonce = random_bytes( SODIUM_CRYPTO_SECRETBOX_NONCEBYTES );
+			$nonce  = random_bytes( SODIUM_CRYPTO_SECRETBOX_NONCEBYTES );
 			$cipher = sodium_crypto_secretbox( $plaintext, $nonce, $key );
-			$blob = 'v1:' . base64_encode( $nonce . $cipher ); // phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions.obfuscation_base64_encode
+			$blob   = 'v1:' . base64_encode( $nonce . $cipher ); // phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions.obfuscation_base64_encode
 			return $blob;
 		}
 
@@ -47,7 +47,7 @@ final class Encryption {
 		if ( false === $iv_length ) {
 			return false;
 		}
-		$iv = openssl_random_pseudo_bytes( $iv_length );
+		$iv     = openssl_random_pseudo_bytes( $iv_length );
 		$cipher = openssl_encrypt( $plaintext, 'aes-256-cbc', $key, OPENSSL_RAW_DATA, $iv );
 		if ( false === $cipher ) {
 			return false;
@@ -78,9 +78,9 @@ final class Encryption {
 			if ( false === $raw || strlen( $raw ) < SODIUM_CRYPTO_SECRETBOX_NONCEBYTES ) {
 				return false;
 			}
-			$nonce = substr( $raw, 0, SODIUM_CRYPTO_SECRETBOX_NONCEBYTES );
+			$nonce  = substr( $raw, 0, SODIUM_CRYPTO_SECRETBOX_NONCEBYTES );
 			$cipher = substr( $raw, SODIUM_CRYPTO_SECRETBOX_NONCEBYTES );
-			$plain = sodium_crypto_secretbox_open( $cipher, $nonce, $key );
+			$plain  = sodium_crypto_secretbox_open( $cipher, $nonce, $key );
 			return false === $plain ? false : $plain;
 		}
 
@@ -97,9 +97,9 @@ final class Encryption {
 			if ( false === $raw || strlen( $raw ) < $iv_length ) {
 				return false;
 			}
-			$iv = substr( $raw, 0, $iv_length );
+			$iv     = substr( $raw, 0, $iv_length );
 			$cipher = substr( $raw, $iv_length );
-			$plain = openssl_decrypt( $cipher, 'aes-256-cbc', $key, OPENSSL_RAW_DATA, $iv );
+			$plain  = openssl_decrypt( $cipher, 'aes-256-cbc', $key, OPENSSL_RAW_DATA, $iv );
 			return false === $plain ? false : $plain;
 		}
 

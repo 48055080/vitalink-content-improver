@@ -33,13 +33,20 @@ jobs:
 
       - name: Static analysis (PHPStan)
         run: composer stan
-        continue-on-error: true
+        env:
+          # PHPStan with the WordPress stubs is memory-hungry on the
+          # matrix's smaller runners. Bump the limit so the step
+          # does not crash with "Child process error" before it can
+          # even report a real finding.
+          COMPOSER_MEMORY_LIMIT: -1
 
       - name: Test (PHPUnit)
         run: composer test
         env:
           WP_TESTS_DIR: /tmp/wordpress-tests-lib
           WP_CORE_DIR: /tmp/wordpress
+        # Only the 8.3 / 6.6 combination is run against a real WP
+        # environment. Other matrix entries are smoke checks.
         continue-on-error: ${{ matrix.php != '8.3' || matrix.wp != '6.6' }}
 
   build:

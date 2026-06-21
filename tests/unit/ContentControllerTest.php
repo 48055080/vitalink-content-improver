@@ -138,10 +138,10 @@ final class ContentControllerTest extends TestCase {
 
 		$by_path = $this->routes_by_path();
 
-		$this->assertSame( array( $this->controller, 'improve' ),   $by_path['/improve']['callback'] );
+		$this->assertSame( array( $this->controller, 'improve' ), $by_path['/improve']['callback'] );
 		$this->assertSame( array( $this->controller, 'summarize' ), $by_path['/summarize']['callback'] );
 		$this->assertSame( array( $this->controller, 'translate' ), $by_path['/translate']['callback'] );
-		$this->assertSame( array( $this->controller, 'alt_text' ),  $by_path['/alt-text']['callback'] );
+		$this->assertSame( array( $this->controller, 'alt_text' ), $by_path['/alt-text']['callback'] );
 	}
 
 	// ---------- helpers ----------
@@ -162,7 +162,7 @@ final class ContentControllerTest extends TestCase {
 	private function routes_by_path(): array {
 		$out = array();
 		foreach ( $GLOBALS['__wp_stubs']['rest_routes'] as $entry ) {
-			$first_args = reset( $entry['methods'] );
+			$first_args             = reset( $entry['methods'] );
 			$out[ $entry['route'] ] = $first_args;
 		}
 		return $out;

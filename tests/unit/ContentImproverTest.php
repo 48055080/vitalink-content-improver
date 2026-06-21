@@ -86,7 +86,7 @@ final class ContentImproverTest extends TestCase {
 		// surrounding whitespace.
 		$this->assertNotNull( $provider->last_prompt_seen );
 		$this->assertStringContainsString( 'hello', $provider->last_prompt_seen );
-		$this->assertStringNotContainsString( "  hello  ", $provider->last_prompt_seen );
+		$this->assertStringNotContainsString( '  hello  ', $provider->last_prompt_seen );
 	}
 
 	public function test_provider_response_is_trimmed(): void {
@@ -114,19 +114,24 @@ final class ContentImproverTest extends TestCase {
 	}
 
 	public function test_provider_throws_propagates_as_provider_exception(): void {
-		$provider = new class implements ProviderInterface {
-			public function get_id(): string { return 'throwing'; }
-			public function get_label(): string { return 'Throwing'; }
-			public function is_configured(): bool { return true; }
-			public function get_available_models(): array { return array( 'm' ); }
-			public function complete( string $prompt, array $options = [] ): string {
+		$provider = new class() implements ProviderInterface {
+			public function get_id(): string {
+				return 'throwing'; }
+			public function get_label(): string {
+				return 'Throwing'; }
+			public function is_configured(): bool {
+				return true; }
+			public function get_available_models(): array {
+				return array( 'm' ); }
+			public function complete( string $prompt, array $options = array() ): string {
 				throw new \Vitalink\ContentImprover\Providers\ProviderException(
 					'upstream down',
 					\Vitalink\ContentImprover\Providers\ProviderException::CODE_SERVER,
 					503
 				);
 			}
-			public function stream( string $prompt, array $options = [] ): \Generator { yield ''; }
+			public function stream( string $prompt, array $options = array() ): \Generator {
+				yield ''; }
 		};
 
 		$feature = new ContentImprover( null, $provider );
@@ -145,17 +150,22 @@ final class ContentImproverTest extends TestCase {
 		$GLOBALS['__wp_stubs']['options']['vitalink_ci_cache_enabled'] = 'off';
 
 		$cache    = new ResponseCache();
-		$provider = new class implements ProviderInterface {
+		$provider = new class() implements ProviderInterface {
 			public int $call_count = 0;
-			public function get_id(): string { return 'counting'; }
-			public function get_label(): string { return 'Counting'; }
-			public function is_configured(): bool { return true; }
-			public function get_available_models(): array { return array( 'm' ); }
-			public function complete( string $prompt, array $options = [] ): string {
+			public function get_id(): string {
+				return 'counting'; }
+			public function get_label(): string {
+				return 'Counting'; }
+			public function is_configured(): bool {
+				return true; }
+			public function get_available_models(): array {
+				return array( 'm' ); }
+			public function complete( string $prompt, array $options = array() ): string {
 				++$this->call_count;
 				return 'reply-' . $this->call_count;
 			}
-			public function stream( string $prompt, array $options = [] ): \Generator { yield ''; }
+			public function stream( string $prompt, array $options = array() ): \Generator {
+				yield ''; }
 		};
 
 		$feature = new ContentImprover( $cache, $provider );
@@ -172,17 +182,22 @@ final class ContentImproverTest extends TestCase {
 
 	public function test_cache_enabled_calls_provider_only_once(): void {
 		$cache    = new ResponseCache();
-		$provider = new class implements ProviderInterface {
+		$provider = new class() implements ProviderInterface {
 			public int $call_count = 0;
-			public function get_id(): string { return 'counting'; }
-			public function get_label(): string { return 'Counting'; }
-			public function is_configured(): bool { return true; }
-			public function get_available_models(): array { return array( 'm' ); }
-			public function complete( string $prompt, array $options = [] ): string {
+			public function get_id(): string {
+				return 'counting'; }
+			public function get_label(): string {
+				return 'Counting'; }
+			public function is_configured(): bool {
+				return true; }
+			public function get_available_models(): array {
+				return array( 'm' ); }
+			public function complete( string $prompt, array $options = array() ): string {
 				++$this->call_count;
 				return 'reply-' . $this->call_count;
 			}
-			public function stream( string $prompt, array $options = [] ): \Generator { yield ''; }
+			public function stream( string $prompt, array $options = array() ): \Generator {
+				yield ''; }
 		};
 
 		$feature = new ContentImprover( $cache, $provider );

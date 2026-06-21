@@ -30,7 +30,7 @@ final class ResponseCache {
 			'prompt'  => trim( $prompt ),
 			'options' => $this->normalize_options( $options ),
 		);
-		$blob = wp_json_encode( $normalized );
+		$blob       = wp_json_encode( $normalized );
 		return 'vitalink_ci_resp_' . md5( (string) $blob );
 	}
 
@@ -69,7 +69,7 @@ final class ResponseCache {
 	 */
 	public function flush(): int {
 		global $wpdb;
-		$like = $wpdb->esc_like( '_transient_vitalink_ci_resp_' ) . '%';
+		$like   = $wpdb->esc_like( '_transient_vitalink_ci_resp_' ) . '%';
 		$like_t = $wpdb->esc_like( '_transient_timeout_vitalink_ci_resp_' ) . '%';
 
 		$deleted = (int) $wpdb->query(

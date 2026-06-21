@@ -16,14 +16,14 @@ use RuntimeException;
 
 final class ProviderException extends RuntimeException {
 
-	public const CODE_NOT_CONFIGURED   = 'not_configured';
-	public const CODE_INVALID_REQUEST  = 'invalid_request';
-	public const CODE_AUTH             = 'auth_failed';
-	public const CODE_RATE_LIMIT       = 'rate_limited';
-	public const CODE_SERVER           = 'server_error';
-	public const CODE_TIMEOUT          = 'timeout';
-	public const CODE_NETWORK          = 'network';
-	public const CODE_UNKNOWN          = 'unknown';
+	public const CODE_NOT_CONFIGURED  = 'not_configured';
+	public const CODE_INVALID_REQUEST = 'invalid_request';
+	public const CODE_AUTH            = 'auth_failed';
+	public const CODE_RATE_LIMIT      = 'rate_limited';
+	public const CODE_SERVER          = 'server_error';
+	public const CODE_TIMEOUT         = 'timeout';
+	public const CODE_NETWORK         = 'network';
+	public const CODE_UNKNOWN         = 'unknown';
 
 	private string $error_code;
 	private ?int $http_status;

@@ -19,6 +19,57 @@
 		<exclude name="Generic.Files.LineLength.TooLong"/>
 		<!-- We do not prefix every function call with global namespace. -->
 		<exclude name="WordPress.NamingConventions.PrefixAllGlobals"/>
+		<!-- Exception messages are not "output" — they are stored on the
+		     exception object and rendered by handlers. WPCS flags this
+		     too aggressively for domain exceptions. -->
+		<exclude name="WordPress.Security.EscapeOutput.ExceptionNotEscaped"/>
+		<!-- The Elvis operator (`?:`) is a standard PHP idiom for
+		     "fall back when falsy". We use it for HTTP-status / default
+		     language fallbacks. -->
+		<exclude name="Universal.Operators.DisallowShortTernary.Found"/>
+	</rule>
+
+	<!-- Test files follow PHPUnit's PascalCase convention, not the
+	     WPCS lowercase-with-hyphens rule. -->
+	<rule ref="WordPress.Files.FileName.NotHyphenatedLowercase">
+		<exclude-pattern>tests/*\.php</exclude-pattern>
+		<exclude-pattern>trunk/src/*\.php</exclude-pattern>
+	</rule>
+
+	<!-- WpStubs.php intentionally mixes WP function stubs with an
+	     anonymous $wpdb class, and assigns $GLOBALS['wpdb']. These are
+	     required for the test harness. -->
+	<rule ref="Universal.Files.SeparateFunctionsFromOO.Mixed">
+		<exclude-pattern>tests/Fixtures/WpStubs\.php</exclude-pattern>
+	</rule>
+	<rule ref="WordPress.WP.GlobalVariablesOverride.Prohibited">
+		<exclude-pattern>tests/Fixtures/WpStubs\.php</exclude-pattern>
+	</rule>
+
+	<!-- Test code legitimately uses base64_encode/decode to build
+	     synthetic encrypted fixtures, fwrite() in bootstrap, and
+	     closure params whose values are not directly referenced.
+	     These are warnings, not errors, in test code. -->
+	<rule ref="WordPress.PHP.DiscouragedPHPFunctions.obfuscation_base64_encode">
+		<exclude-pattern>tests/*\.php</exclude-pattern>
+	</rule>
+	<rule ref="WordPress.PHP.DiscouragedPHPFunctions.obfuscation_base64_decode">
+		<exclude-pattern>tests/*\.php</exclude-pattern>
+	</rule>
+	<rule ref="WordPress.WP.AlternativeFunctions.file_system_operations_fwrite">
+		<exclude-pattern>tests/*\.php</exclude-pattern>
+	</rule>
+	<rule ref="Generic.CodeAnalysis.UnusedFunctionParameter.Found">
+		<exclude-pattern>tests/*\.php</exclude-pattern>
+	</rule>
+	<rule ref="Generic.CodeAnalysis.UnusedFunctionParameter.FoundAfterLastUsed">
+		<exclude-pattern>tests/*\.php</exclude-pattern>
+	</rule>
+	<rule ref="Universal.NamingConventions.NoReservedKeywordParameterNames">
+		<exclude-pattern>tests/*\.php</exclude-pattern>
+	</rule>
+	<rule ref="WordPress.WP.AlternativeFunctions.json_encode_json_encode">
+		<exclude-pattern>tests/*\.php</exclude-pattern>
 	</rule>
 
 	<!-- Minimum supported WP version. Update before each release. -->

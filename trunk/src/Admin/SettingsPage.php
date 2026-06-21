@@ -42,65 +42,95 @@ final class SettingsPage {
 			register_setting( self::OPTION_GROUP, $name, $args );
 		};
 
-		$register( 'vitalink_ci_provider', array(
-			'type'              => 'string',
-			'sanitize_callback' => 'sanitize_key',
-			'default'           => 'openai',
-		) );
+		$register(
+			'vitalink_ci_provider',
+			array(
+				'type'              => 'string',
+				'sanitize_callback' => 'sanitize_key',
+				'default'           => 'openai',
+			)
+		);
 
-		$register( 'vitalink_ci_openai_api_key', array(
-			'type'              => 'string',
-			'sanitize_callback' => $this->make_secret_sanitizer( 'vitalink_ci_openai_api_key' ),
-			'default'           => '',
-		) );
+		$register(
+			'vitalink_ci_openai_api_key',
+			array(
+				'type'              => 'string',
+				'sanitize_callback' => $this->make_secret_sanitizer( 'vitalink_ci_openai_api_key' ),
+				'default'           => '',
+			)
+		);
 
-		$register( 'vitalink_ci_openai_model', array(
-			'type'              => 'string',
-			'sanitize_callback' => 'sanitize_text_field',
-			'default'           => 'gpt-4o-mini',
-		) );
+		$register(
+			'vitalink_ci_openai_model',
+			array(
+				'type'              => 'string',
+				'sanitize_callback' => 'sanitize_text_field',
+				'default'           => 'gpt-4o-mini',
+			)
+		);
 
-		$register( 'vitalink_ci_anthropic_api_key', array(
-			'type'              => 'string',
-			'sanitize_callback' => $this->make_secret_sanitizer( 'vitalink_ci_anthropic_api_key' ),
-			'default'           => '',
-		) );
+		$register(
+			'vitalink_ci_anthropic_api_key',
+			array(
+				'type'              => 'string',
+				'sanitize_callback' => $this->make_secret_sanitizer( 'vitalink_ci_anthropic_api_key' ),
+				'default'           => '',
+			)
+		);
 
-		$register( 'vitalink_ci_anthropic_model', array(
-			'type'              => 'string',
-			'sanitize_callback' => 'sanitize_text_field',
-			'default'           => 'claude-sonnet-4-5',
-		) );
+		$register(
+			'vitalink_ci_anthropic_model',
+			array(
+				'type'              => 'string',
+				'sanitize_callback' => 'sanitize_text_field',
+				'default'           => 'claude-sonnet-4-5',
+			)
+		);
 
-		$register( 'vitalink_ci_ollama_base_url', array(
-			'type'              => 'string',
-			'sanitize_callback' => 'esc_url_raw',
-			'default'           => 'http://localhost:11434',
-		) );
+		$register(
+			'vitalink_ci_ollama_base_url',
+			array(
+				'type'              => 'string',
+				'sanitize_callback' => 'esc_url_raw',
+				'default'           => 'http://localhost:11434',
+			)
+		);
 
-		$register( 'vitalink_ci_ollama_model', array(
-			'type'              => 'string',
-			'sanitize_callback' => 'sanitize_text_field',
-			'default'           => 'llama3.1',
-		) );
+		$register(
+			'vitalink_ci_ollama_model',
+			array(
+				'type'              => 'string',
+				'sanitize_callback' => 'sanitize_text_field',
+				'default'           => 'llama3.1',
+			)
+		);
 
-		$register( 'vitalink_ci_cache_enabled', array(
-			'type'              => 'string',
-			'sanitize_callback' => 'sanitize_text_field',
-			'default'           => 'on',
-		) );
+		$register(
+			'vitalink_ci_cache_enabled',
+			array(
+				'type'              => 'string',
+				'sanitize_callback' => 'sanitize_text_field',
+				'default'           => 'on',
+			)
+		);
 
-		$register( 'vitalink_ci_cache_ttl', array(
-			'type'              => 'integer',
-			'sanitize_callback' => 'absint',
-			'default'           => DAY_IN_SECONDS * 7,
-		) );
+		$register(
+			'vitalink_ci_cache_ttl',
+			array(
+				'type'              => 'integer',
+				'sanitize_callback' => 'absint',
+				'default'           => DAY_IN_SECONDS * 7,
+			)
+		);
 
-		$register( 'vitalink_ci_default_target_language', array(
-			'type'              => 'string',
-			'sanitize_callback' => 'sanitize_text_field',
-			'default'           => 'English',
-		) );
+		$register(
+			'vitalink_ci_default_target_language',
+			array(
+				'type'              => 'string',
+				'sanitize_callback' => 'sanitize_text_field',
+				'default'           => 'English',
+			)
+		);
 	}
 
 	public function render(): void {

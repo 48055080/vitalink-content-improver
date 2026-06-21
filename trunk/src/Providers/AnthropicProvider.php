@@ -13,8 +13,8 @@ use Vitalink\ContentImprover\Support\Encryption;
 
 final class AnthropicProvider implements ProviderInterface {
 
-	private const ENDPOINT = 'https://api.anthropic.com/v1/messages';
-	private const API_VERSION = '2023-06-01';
+	private const ENDPOINT       = 'https://api.anthropic.com/v1/messages';
+	private const API_VERSION    = '2023-06-01';
 	private const OPTION_API_KEY = 'vitalink_ci_anthropic_api_key';
 
 	private string $api_key;
@@ -73,7 +73,10 @@ final class AnthropicProvider implements ProviderInterface {
 			'temperature' => $temperature,
 			'system'      => $system,
 			'messages'    => array(
-				array( 'role' => 'user', 'content' => $prompt ),
+				array(
+					'role'    => 'user',
+					'content' => $prompt,
+				),
 			),
 		);
 
@@ -93,9 +96,7 @@ final class AnthropicProvider implements ProviderInterface {
 		if ( is_wp_error( $response ) ) {
 			throw new ProviderException(
 				$response->get_error_message(),
-				ProviderException::CODE_NETWORK,
-				null,
-				$response
+				ProviderException::CODE_NETWORK
 			);
 		}
 

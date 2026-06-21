@@ -1,0 +1,20 @@
+includes:
+    - vendor/szepeviktor/phpstan-wordpress/extension.neon
+
+parameters:
+    level: 5
+
+    paths:
+        - trunk/src
+
+    # szepeviktor/phpstan-wordpress auto-discovers WordPress; the
+    # PhpStanStubs file re-defines the VITALINK_CI_* plugin constants
+    # and stubs WP_CLI which the extension does not cover.
+    scanFiles:
+        - tests/Fixtures/PhpStanStubs.php
+
+    # szepeviktor/phpstan-wordpress auto-discovers WordPress; no scanFiles needed.
+
+    # Treat missing $wpdb / WP hooks as info-only so the plugin can be
+    # analysed in isolation (the integration suite wires the real WP env).
+    treatPhpDocTypesAsCertain: false

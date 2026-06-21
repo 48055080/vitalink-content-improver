@@ -47,7 +47,7 @@ interface ProviderInterface {
 	 *                         - system     (string) Optional system message.
 	 * @return string The model output.
 	 */
-	public function complete( string $prompt, array $options = [] ): string;
+	public function complete( string $prompt, array $options = array() ): string;
 
 	/**
 	 * Stream the completion as a generator of string chunks.
@@ -59,7 +59,7 @@ interface ProviderInterface {
 	 * @param array  $options Same options as complete().
 	 * @return \Generator<string> String chunks.
 	 */
-	public function stream( string $prompt, array $options = [] ): \Generator;
+	public function stream( string $prompt, array $options = array() ): \Generator;
 
 	/**
 	 * List the model IDs this provider supports. Used for the settings dropdown.

@@ -15,44 +15,49 @@ declare(strict_types=1);
 
 // State: a flat bag of WP "global" values, keyed by name.
 $GLOBALS['__wp_stubs'] = array(
-	'options'         => array(),   // get_option / update_option backing
-	'transients'      => array(),   // get_transient / set_transient / delete_transient backing
-	'filters'         => array(),   // apply_filters backing
-	'last_filter_args' => array(),
+	'options'                  => array(),   // get_option / update_option backing
+	'transients'               => array(),   // get_transient / set_transient / delete_transient backing
+	'filters'                  => array(),   // apply_filters backing
+	'last_filter_args'         => array(),
 	// Simulated wp_options rows used by ResponseCache::flush().
 	// The stubbed $wpdb counts how many rows were "deleted" so tests can
 	// assert on the return value of $wpdb->query().
-	'options_table'   => array(),
+	'options_table'            => array(),
 	'last_query_rows_affected' => 0,
 	// REST route registrations captured by register_rest_route().
 	// Each entry: [ 'namespace' => '...', 'route' => '...', 'args' => array(...) ]
-	'rest_routes'     => array(),
-	'current_user_can' => false,    // what current_user_can() returns in tests
-	'current_user_caps' => array(), // which caps have been checked
+	'rest_routes'              => array(),
+	'current_user_can'         => false,    // what current_user_can() returns in tests
+	'current_user_caps'        => array(), // which caps have been checked
 );
 
 // Reset all stubs to a clean state. Call from setUp().
-function wp_stubs_reset(): void {
-	$GLOBALS['__wp_stubs']['options']                 = array();
-	$GLOBALS['__wp_stubs']['transients']              = array();
-	$GLOBALS['__wp_stubs']['filters']                 = array();
-	$GLOBALS['__wp_stubs']['last_filter_args']        = array();
-	$GLOBALS['__wp_stubs']['options_table']           = array();
-	$GLOBALS['__wp_stubs']['last_query_rows_affected'] = 0;
-	$GLOBALS['__wp_stubs']['rest_routes']             = array();
-	$GLOBALS['__wp_stubs']['current_user_can']        = false;
-	$GLOBALS['__wp_stubs']['current_user_caps']       = array();
-}
+// Guarded with function_exists so the file is safe to load twice
+// (once via the bootstrap, once via the classmap autoloader when
+// some other class in this directory is referenced).
+if ( ! function_exists( 'wp_stubs_reset' ) ) {
+	function wp_stubs_reset(): void {
+		$GLOBALS['__wp_stubs']['options']                  = array();
+		$GLOBALS['__wp_stubs']['transients']               = array();
+		$GLOBALS['__wp_stubs']['filters']                  = array();
+		$GLOBALS['__wp_stubs']['last_filter_args']         = array();
+		$GLOBALS['__wp_stubs']['options_table']            = array();
+		$GLOBALS['__wp_stubs']['last_query_rows_affected'] = 0;
+		$GLOBALS['__wp_stubs']['rest_routes']              = array();
+		$GLOBALS['__wp_stubs']['current_user_can']         = false;
+		$GLOBALS['__wp_stubs']['current_user_caps']        = array();
+	}
 
-/**
- * Seed the simulated wp_options table for flush() tests.
- *
- * Rows whose option_name starts with "_transient_vitalink_ci_resp_" will
- * be counted by the stubbed $wpdb->query() in a way that mirrors what the
- * real flush() deletes.
- */
-function wp_stubs_seed_options_table( array $rows ): void {
-	$GLOBALS['__wp_stubs']['options_table'] = $rows;
+	/**
+	 * Seed the simulated wp_options table for flush() tests.
+	 *
+	 * Rows whose option_name starts with "_transient_vitalink_ci_resp_" will
+	 * be counted by the stubbed $wpdb->query() in a way that mirrors what the
+	 * real flush() deletes.
+	 */
+	function wp_stubs_seed_options_table( array $rows ): void {
+		$GLOBALS['__wp_stubs']['options_table'] = $rows;
+	}
 }
 
 if ( ! function_exists( 'get_option' ) ) {
@@ -151,10 +156,10 @@ if ( ! defined( 'VITALINK_CI_REST_NAMESPACE' ) ) {
 // at route registration time.
 if ( ! class_exists( 'WP_REST_Server' ) ) {
 	final class WP_REST_Server {
-		const READABLE   = 'GET';
-		const CREATABLE  = 'POST';
-		const EDITABLE   = 'POST, PUT, PATCH';
-		const DELETABLE  = 'DELETE';
+		const READABLE  = 'GET';
+		const CREATABLE = 'POST';
+		const EDITABLE  = 'POST, PUT, PATCH';
+		const DELETABLE = 'DELETE';
 	}
 }
 
@@ -162,7 +167,7 @@ if ( ! class_exists( 'WP_REST_Server' ) ) {
 // $GLOBALS['__wp_stubs']['options_table'] to simulate the wp_options rows
 // the production code will DELETE.
 if ( ! isset( $GLOBALS['wpdb'] ) ) {
-	$GLOBALS['wpdb'] = new class {
+	$GLOBALS['wpdb'] = new class() {
 		public string $options = 'wp_options';
 		public function esc_like( $text ) {
 			return addcslashes( (string) $text, '_%\\' );
@@ -178,17 +183,17 @@ if ( ! isset( $GLOBALS['wpdb'] ) ) {
 		}
 		public function query( $sql ) {
 			// Mirror the LIKE pattern built by ResponseCache::flush().
-			$rows = $GLOBALS['__wp_stubs']['options_table'] ?? array();
+			$rows    = $GLOBALS['__wp_stubs']['options_table'] ?? array();
 			$matched = 0;
 			foreach ( $rows as $name => $_value ) {
 				if ( str_starts_with( $name, '_transient_vitalink_ci_resp_' )
 					|| str_starts_with( $name, '_transient_timeout_vitalink_ci_resp_' )
 				) {
 					unset( $rows[ $name ] );
-					$matched++;
+					++$matched;
 				}
 			}
-			$GLOBALS['__wp_stubs']['options_table'] = $rows;
+			$GLOBALS['__wp_stubs']['options_table']            = $rows;
 			$GLOBALS['__wp_stubs']['last_query_rows_affected'] = $matched;
 			return $matched;
 		}
