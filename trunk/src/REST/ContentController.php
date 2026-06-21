@@ -116,41 +116,49 @@ final class ContentController {
 	public function improve( WP_REST_Request $request ): WP_REST_Response|WP_Error {
 		$text  = (string) $request->get_param( 'text' );
 		$style = (string) $request->get_param( 'style' );
-		try {
-			$result = ( new ContentImprover() )->improve( $text, $style );
-			return rest_ensure_response( array( 'text' => $result ) );
-		} catch ( ProviderException $e ) {
-			return new WP_Error( 'vitalink_ci_' . $e->get_error_code(), $e->getMessage(), array( 'status' => $e->get_http_status() ?: 500 ) );
-		}
+		return $this->run_feature(
+			fn() => ( new ContentImprover() )->improve( $text, $style )
+		);
 	}
 
 	public function summarize( WP_REST_Request $request ): WP_REST_Response|WP_Error {
 		$text   = (string) $request->get_param( 'text' );
 		$length = (int) $request->get_param( 'length' );
-		try {
-			$result = ( new Summarizer() )->summarize( $text, $length );
-			return rest_ensure_response( array( 'text' => $result ) );
-		} catch ( ProviderException $e ) {
-			return new WP_Error( 'vitalink_ci_' . $e->get_error_code(), $e->getMessage(), array( 'status' => $e->get_http_status() ?: 500 ) );
-		}
+		return $this->run_feature(
+			fn() => ( new Summarizer() )->summarize( $text, $length )
+		);
 	}
 
 	public function translate( WP_REST_Request $request ): WP_REST_Response|WP_Error {
 		$text   = (string) $request->get_param( 'text' );
 		$target = $request->get_param( 'target' );
-		try {
-			$result = ( new Translator() )->translate( $text, is_string( $target ) ? $target : null );
-			return rest_ensure_response( array( 'text' => $result ) );
-		} catch ( ProviderException $e ) {
-			return new WP_Error( 'vitalink_ci_' . $e->get_error_code(), $e->getMessage(), array( 'status' => $e->get_http_status() ?: 500 ) );
-		}
+		return $this->run_feature(
+			fn() => ( new Translator() )->translate( $text, is_string( $target ) ? $target : null )
+		);
 	}
 
 	public function alt_text( WP_REST_Request $request ): WP_REST_Response|WP_Error {
 		$image = $request->get_param( 'image' );
+		return $this->run_feature(
+			fn() => ( new AltTextGenerator() )->generate( $image ),
+			'alt'
+		);
+	}
+
+	/**
+	 * Run a feature callable, wrap the result in a REST response, and
+	 * convert any ProviderException into a structured WP_Error.
+	 *
+	 * Centralised so all four endpoints fail the same way (same error
+	 * code prefix, same status fallback) — change the shape here and
+	 * every endpoint follows.
+	 *
+	 * @param callable(): string $feature     Work callable; returns the result string.
+	 * @param string             $result_key  JSON key to wrap the result under. Defaults to 'text'; alt-text uses 'alt'.
+	 */
+	private function run_feature( callable $feature, string $result_key = 'text' ): WP_REST_Response|WP_Error {
 		try {
-			$result = ( new AltTextGenerator() )->generate( $image );
-			return rest_ensure_response( array( 'alt' => $result ) );
+			return rest_ensure_response( array( $result_key => $feature() ) );
 		} catch ( ProviderException $e ) {
 			return new WP_Error( 'vitalink_ci_' . $e->get_error_code(), $e->getMessage(), array( 'status' => $e->get_http_status() ?: 500 ) );
 		}

@@ -109,6 +109,33 @@ final class Encryption {
 	}
 
 	/**
+	 * Resolve an API key for a provider from explicit config or encrypted option.
+	 *
+	 * Callers (e.g. provider constructors) prefer an explicit $config['api_key']
+	 * when given, otherwise they read the encrypted-at-rest wp_options slot
+	 * named by $option_name and decrypt it. Returns '' when neither path
+	 * yields a value (caller decides whether that means "unconfigured").
+	 *
+	 * Centralising the read/decrypt contract here means providers don't
+	 * each reinvent the fallback rule.
+	 *
+	 * @param string $option_name wp_options key holding the encrypted key.
+	 * @param array  $config      Optional explicit config (e.g. from a custom factory).
+	 * @return string Plaintext key, or '' on miss/failure.
+	 */
+	public static function resolve_api_key( string $option_name, array $config = array() ): string {
+		if ( isset( $config['api_key'] ) && '' !== $config['api_key'] ) {
+			return (string) $config['api_key'];
+		}
+		$stored = (string) get_option( $option_name, '' );
+		if ( '' === $stored ) {
+			return '';
+		}
+		$plain = self::decrypt( $stored );
+		return false === $plain ? '' : $plain;
+	}
+
+	/**
 	 * Derive a stable 32-byte key from wp_salt().
 	 *
 	 * @return string|false 32-byte binary key, or false if salts are missing.

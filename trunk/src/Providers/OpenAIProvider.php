@@ -13,33 +13,17 @@ use Vitalink\ContentImprover\Support\Encryption;
 
 final class OpenAIProvider implements ProviderInterface {
 
-	private const ENDPOINT       = 'https://api.openai.com/v1/chat/completions';
-	private const OPTION_API_KEY = 'vitalink_ci_openai_api_key';
+	private const ENDPOINT      = 'https://api.openai.com/v1/chat/completions';
+	public const OPTION_API_KEY = 'vitalink_ci_openai_api_key';
 
 	private string $api_key;
 	private string $model;
 	private ?string $base_url;
 
 	public function __construct( array $config = array() ) {
-		$this->api_key  = $this->resolve_api_key( $config );
+		$this->api_key  = Encryption::resolve_api_key( self::OPTION_API_KEY, $config );
 		$this->model    = (string) ( $config['model'] ?? get_option( 'vitalink_ci_openai_model', 'gpt-4o-mini' ) );
 		$this->base_url = (string) ( $config['base_url'] ?? get_option( 'vitalink_ci_openai_base_url', self::ENDPOINT ) );
-	}
-
-	/**
-	 * Pick the API key from explicit config first, else fall back to the
-	 * stored option (which is encrypted at rest).
-	 */
-	private function resolve_api_key( array $config ): string {
-		if ( isset( $config['api_key'] ) && '' !== $config['api_key'] ) {
-			return (string) $config['api_key'];
-		}
-		$stored = (string) get_option( self::OPTION_API_KEY, '' );
-		if ( '' === $stored ) {
-			return '';
-		}
-		$plain = Encryption::decrypt( $stored );
-		return false === $plain ? '' : $plain;
 	}
 
 	public function get_id(): string {

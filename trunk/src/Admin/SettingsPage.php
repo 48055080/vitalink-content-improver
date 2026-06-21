@@ -12,6 +12,8 @@ declare(strict_types=1);
 
 namespace Vitalink\ContentImprover\Admin;
 
+use Vitalink\ContentImprover\Providers\AnthropicProvider;
+use Vitalink\ContentImprover\Providers\OpenAIProvider;
 use Vitalink\ContentImprover\Providers\ProviderFactory;
 use Vitalink\ContentImprover\Support\Encryption;
 
@@ -52,10 +54,10 @@ final class SettingsPage {
 		);
 
 		$register(
-			'vitalink_ci_openai_api_key',
+			OpenAIProvider::OPTION_API_KEY,
 			array(
 				'type'              => 'string',
-				'sanitize_callback' => $this->make_secret_sanitizer( 'vitalink_ci_openai_api_key' ),
+				'sanitize_callback' => $this->make_secret_sanitizer( OpenAIProvider::OPTION_API_KEY ),
 				'default'           => '',
 			)
 		);
@@ -70,10 +72,10 @@ final class SettingsPage {
 		);
 
 		$register(
-			'vitalink_ci_anthropic_api_key',
+			AnthropicProvider::OPTION_API_KEY,
 			array(
 				'type'              => 'string',
-				'sanitize_callback' => $this->make_secret_sanitizer( 'vitalink_ci_anthropic_api_key' ),
+				'sanitize_callback' => $this->make_secret_sanitizer( AnthropicProvider::OPTION_API_KEY ),
 				'default'           => '',
 			)
 		);
